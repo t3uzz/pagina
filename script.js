@@ -1,37 +1,33 @@
-let display = document.getElementById('display');
-let currentInput = '';
-let currentOperator = '';
+const display = document.getElementById('display');
 
-function appendNumber(number) {
-    if (number === '.' && currentInput.includes('.')) return;
-    currentInput += number;
-    display.textContent = currentInput;
-}
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        handleInput(button.textContent);
+    });
+});
 
-function appendOperator(operator) {
-    if (currentInput === '' && operator !== '.') return;
-    if (['+', '-', '*', '/', '%'].includes(currentInput.slice(-1)) && operator !== '.') return;
-    currentInput += operator;
-    display.textContent = currentInput;
-}
-
-function calculate() {
-    try {
-        let result = eval(currentInput);
-        if (Number.isInteger(result)) {
-            result = result.toString();
-        } else {
-            result = result.toFixed(2);
-        }
-        currentInput = result;
-        display.textContent = currentInput;
-    } catch (error) {
-        display.textContent = 'Erro';
-        currentInput = '';
+document.addEventListener('keydown', (e) => {
+    const key = e.key;
+    if (key === 'Enter') {
+        handleInput('=');
+    } else if (key === 'Backspace') {
+        handleInput('C');
+    } else if (/[\d\+\-\*\/\.\(\)]/.test(key)) {
+        handleInput(key);
     }
-}
+});
 
-function clearDisplay() {
-    currentInput = '';
-    display.textContent = '0';
+function handleInput(input) {
+    if (input === 'C') {
+        display.value = '';
+    } else if (input === '=') {
+        try {
+            display.value = eval(display.value);
+        } catch {
+            display.value = 'Erro';
+        }
+    } else {
+        display.value += input;
+    }
 }
